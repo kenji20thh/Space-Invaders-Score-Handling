@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"sync"
 )
@@ -28,5 +29,22 @@ func handleScore(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var newScore Score 
-	if err := j
+	if err := json.NewDecoder(r.Body).Decode(&newScore); err != nil {
+		http.Error(w, "Invalid Json", http.StatusBadRequest)
+		return
+	}
+
+	mutex.Lock()
+	scores = append(scores, newScore)
+	mutex.Unlock()
+	w.WriteHeader(http.StatusCreated)
+}
+
+func getScores(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w,"Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	mutex.Lock()
+	defer mutex.Unlock()
 }
