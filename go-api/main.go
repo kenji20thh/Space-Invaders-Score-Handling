@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"sync"
 )
@@ -18,8 +19,9 @@ var (
 )
 
 func main () {
-	// http.HandleFunc("/score", handleScore)
-	// http.HandleFunc("/scores", getScores) 
+	http.HandleFunc("/score", handleScore)
+	http.HandleFunc("/scores", getScores) 
+	fmt.Println("Server is running on http://localhost:8080")
 }
 
 func handleScore(w http.ResponseWriter, r *http.Request) {
