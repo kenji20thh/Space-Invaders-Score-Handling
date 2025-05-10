@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sort"
 	"sync"
 )
 
@@ -49,4 +50,25 @@ func getScores(w http.ResponseWriter, r *http.Request) {
 	}
 	mutex.Lock()
 	defer mutex.Unlock()
+
+	sort.Slice(scores, func(i,j int)bool {
+		return scores[i].Score > scores[j].Score
+	})
+
+	type RankedScore struct {
+		Rank int `json:"rank"`
+		Name string `json:"name"`
+		Score int `json:"score"`
+		Time string `json:"time"`
+	}
+
+	var response []RankedScore
+	for i, s := range scores {
+		response = append(response, RankedScore{
+			Rank: i+1,
+			Name: s.Name,
+			Score: s.Score,
+			Time: s.Time,
+		})
+	}
 }
